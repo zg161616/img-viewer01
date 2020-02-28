@@ -1,0 +1,70 @@
+<link  href="css/layui.css" rel="stylesheet">
+<script src="js/layui.js"></script>
+<script>
+layui.use(['layer', 'form', 'upload', 'laydate', 'element'], function(){
+        var laydate = layui.laydate
+            , layer = layui.layer
+            , form = layui.form
+            , $ = layui.jquery
+            ,upload = layui.upload;
+			
+function getImgNaturalDimensions(oImg, callback) {
+    var nWidth, nHeight;
+    if (!oImg.naturalWidth) { // 现代浏览器
+        nWidth = oImg.naturalWidth;
+        nHeight = oImg.naturalHeight;
+        callback({w: nWidth, h:nHeight});
+    } else { // IE6/7/8
+        var nImg = new Image();
+        nImg.onload = function() {
+            var nWidth = nImg.width, nHeight = nImg.height;
+            callback({w: nWidth, h:nHeight});
+        }
+        nImg.src = oImg.src;
+    }
+}
+
+function getImgZoomDimensions(dimensions){
+    var _h = 600, _w = 800;
+    if(dimensions.w<=dimensions.h){
+        if(dimensions.h<_h){
+            _h = dimensions.h;
+        }
+        if(dimensions.w>_w){
+            _h = _w*dimensions.h/dimensions.w;
+        }else{
+            _w = dimensions.w;
+        }
+    }else{
+        if(dimensions.w<_w){
+            _w = dimensions.w;
+        }
+        if(dimensions.h>_h){
+            _w = _h*dimensions.w/dimensions.h;
+        }else{
+            _h = dimensions.h;
+        }
+    }
+    return {w: _w, h: _h};
+}
+    function reviewVoucher(o){
+        var img = document.getElementById(o);
+        getImgNaturalDimensions(img, function(dimensions){
+            var _img = getImgZoomDimensions(dimensions);
+            layer.open({
+                type: 1,
+                shade: 0.8,
+                offset: 'auto',
+                area: [_img.w + 'px', _img.h + 'px'],
+                shadeClose: true,
+                scrollbar: false,
+                title: false,
+                content: "<img src='" + img.src + "' width='" + _img.w +"' height='" + _img.h + "'>",
+                cancel: function () {}
+            });
+        });
+    }
+   });
+</script>
+<img style="display: none" src="img/index.jpg" id="image">
+<img class="layui-upload-img" src="img/index.jpg" onerror="" onclick="reviewVoucher('image')">
